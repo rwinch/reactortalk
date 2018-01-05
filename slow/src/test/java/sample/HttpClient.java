@@ -1,22 +1,14 @@
 package sample;
 
-import org.springframework.util.StreamUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 
 
@@ -34,6 +26,10 @@ public class HttpClient {
 	public static class Request {
 		private URL url;
 
+		private long delay = TimeUnit.SECONDS.toMillis(7);
+
+		private int delayEveryBytes = 500000;
+
 		private Request() {
 		}
 
@@ -42,8 +38,17 @@ public class HttpClient {
 			return this;
 		}
 
+		public Request delay(long delay) {
+			this.delay = delay;
+			return this;
+		}
+
+		public Request delayEveryBytes(int byteCount) {
+			this.delayEveryBytes = byteCount;
+			return this;
+		}
+
 		public Response exchange() {
-			long delay = TimeUnit.SECONDS.toMillis(7);
 			String request = "GET " + url.toExternalForm() + " HTTP/1.0\r\n";
 			int port = url.getPort();
 			request += "Accept: text/plain\r\n";
@@ -63,12 +68,19 @@ public class HttpClient {
 				char[] buffer = new char[4096];
 
 				int bytesRead;
-				int reads = 0;
+				int totalBytesRead = 0;
+				float status = 0;
 				while((bytesRead = reader.read(buffer)) != -1) {
+					totalBytesRead += bytesRead;
 					out.append(buffer, 0, bytesRead);
-					if(++reads % 10 == 0) {
-						System.out.println("Sleeping for " + delay);
+					float newStatus = totalBytesRead / delayEveryBytes;
+					if(status < newStatus) {
+						System.out.print("Sleeping for " + delay + "...");
+						System.out.flush();
 						Thread.sleep(delay);
+						System.out.println("Done");
+						System.out.flush();
+						status = newStatus;
 					}
 				}
 
