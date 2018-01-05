@@ -17,6 +17,12 @@ public class SlowApplicationTests {
 	}
 
 	@Test
+	public void slowServletConnection() throws Exception {
+		HttpClient client = new HttpClient("http://localhost:"+ this.port);
+		client.get("/servlet").exchange().print();
+	}
+
+	@Test
 	public void normalConnection() throws Exception {
 		URL url = new URL("http://localhost:" + this.port + "/fast");
 		URLConnection conn = url.openConnection();
