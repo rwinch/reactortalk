@@ -15,7 +15,7 @@ public class SlowApplication {
 
 	@GetMapping("/slow")
 	public String slow() throws Exception {
-		Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+		Thread.sleep(TimeUnit.SECONDS.toMillis(10));
 		return "slow";
 	}
 
@@ -36,7 +36,7 @@ public class SlowApplication {
 		String FAST = "fast\n";
 		String result = FAST;
 		response.setBufferSize(1);
-		for(int i=0;i<200000;i++) {
+		for(int i=0;i<20000;i++) {
 			//			result += FAST;
 			writer.write(FAST);
 			response.flushBuffer();
