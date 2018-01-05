@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @RestController
@@ -14,7 +15,7 @@ public class SlowApplication {
 
 	@GetMapping("/slow")
 	public String slow() throws Exception {
-		Thread.sleep(1000L);
+		Thread.sleep(TimeUnit.SECONDS.toMillis(30));
 		return "slow";
 	}
 
