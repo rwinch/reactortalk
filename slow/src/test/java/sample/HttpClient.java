@@ -28,7 +28,7 @@ public class HttpClient {
 
 		private long delay = TimeUnit.SECONDS.toMillis(7);
 
-		private int delayEveryBytes = 500000;
+		private int delayEveryBytes = 100000;
 
 		private Request() {
 		}
